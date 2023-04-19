@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
  * @author Glauco Luiz Rezende de Carvalho
  * @email glauco.carvalho@academico.ifs.edu.br
  * @version 1.00
+ * Date: 19/04/2023
  **/
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 public class RestApiApplication {
