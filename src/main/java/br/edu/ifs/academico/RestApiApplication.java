@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
  * Classe para iniciar a aplicação Spring Boot
  * @author Glauco Luiz Rezende de Carvalho
  * @email glauco.carvalho@academico.ifs.edu.br
- * @version 1.00
+ * @version 1.01
  * Date: 19/04/2023
  **/
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
