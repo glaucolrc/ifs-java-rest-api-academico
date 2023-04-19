@@ -9,10 +9,10 @@
 
 ### Sobre
 - Mestre em Ciência da Computação pela Universidade Federal de Sergipe [@ufs](https://www.sigaa.ufs.br/sigaa/public/programa/portal.jsf?id=710).
-- Administrador de Banco de Dados {SQL Server e Oracle} no [@mpse](https://www.mpse.mp.br/).
+- Administrador de Banco de Dados {SQL Server e Oracle} no Ministério Público de Sergipe [@mpse](https://www.mpse.mp.br/).
 - Especialista em Business Intelligence [@powerbi](https://powerbi.microsoft.com/pt-br/).
 - Desenvolvedor {backend e frontend}[@spring](https://spring.io/) | [@dotnet](https://dotnet.microsoft.com/pt-br/) | [@react](https://legacy.reactjs.org/) | [@angular](https://angular.io/).
-- Professor no [@ifs](http://www.ifs.edu.br/) | [@curso](http://www.ifs.edu.br/cursos-nova-pagina/259-cursos/superiores/7916-tecnologia-em-analise-e-desenvolvimento-de-sistemas).
+- Professor no Instituto Federal de Sergipe [@ifs](http://www.ifs.edu.br/) | [@curso](http://www.ifs.edu.br/cursos-nova-pagina/259-cursos/superiores/7916-tecnologia-em-analise-e-desenvolvimento-de-sistemas).
 - Curriculo Lattes [@lattes](http://lattes.cnpq.br/4026888519877759).
 
 
