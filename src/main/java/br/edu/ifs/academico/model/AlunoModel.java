@@ -3,7 +3,6 @@ package br.edu.ifs.academico.model;
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Entity
@@ -26,7 +25,7 @@ public class AlunoModel {
     @Column(name = "dataNascimento", nullable = false)
     private LocalDate dataNascimento;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "genero_id")
     private GeneroModel generoModel;
 }

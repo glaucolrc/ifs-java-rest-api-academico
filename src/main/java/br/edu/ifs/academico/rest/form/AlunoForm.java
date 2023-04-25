@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @Data
 public class AlunoForm {
 
-
     @NotBlank(message = "O Nome não pode estar em branco.")
     @Size(max = 100)
     private String nome;
@@ -29,11 +28,6 @@ public class AlunoForm {
     @Past(message = "A data de nascimento informada deve ser anterior ao dia atual.")
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataNascimento;
-
-
-//    @NotNull(message = "Data de nascimento não pode ser nula")
-//    @JsonFormat(pattern = "dd/MM/yyyy")
-//    private LocalDate dataNascimento;
 
     @NotNull
     private GeneroForm generoForm;

@@ -2,10 +2,7 @@ package br.edu.ifs.academico.rest.form;
 
 import lombok.Data;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 
 @Data
@@ -19,4 +16,7 @@ public class AlunoUpdateForm {
     @Email(message = "O Endereço de e-mail é inválido.")
     @Size(max = 80)
     private String email;
+
+    @NotNull
+    private GeneroForm generoForm;
 }

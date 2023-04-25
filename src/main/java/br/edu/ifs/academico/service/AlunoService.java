@@ -67,12 +67,24 @@ public class AlunoService {
         return null;
     }
 
-    public AlunoDto updateById(AlunoUpdateForm form, long matricula) {
+    public AlunoDto updateById(AlunoUpdateForm alunoUpdateForm, long matricula) {
         Optional<AlunoModel> optionalAlunoModel = alunoRepository.findById(matricula);
         if (optionalAlunoModel.isPresent()) {
             AlunoModel obj = optionalAlunoModel.get();
-            obj.setNome(form.getNome());
-            obj.setEmail(form.getEmail());
+            obj.setNome(alunoUpdateForm.getNome());
+            obj.setEmail(alunoUpdateForm.getEmail());
+            if (alunoUpdateForm.getGeneroForm() != null){
+                GeneroModel generoModel = new GeneroModel();
+                if (alunoUpdateForm.getGeneroForm().getId() != null) {
+                    if (generoRepository.existsById(alunoUpdateForm.getGeneroForm().getId())){
+                        generoModel = generoRepository.getById(alunoUpdateForm.getGeneroForm().getId());
+                    }
+                } else {
+                    generoModel.setDescricao(alunoUpdateForm.getGeneroForm().getDescricao());
+                    generoRepository.save(generoModel);
+                }
+                obj.setGeneroModel(generoModel);
+            }
             alunoRepository.save(obj);
             return convertToAlunoDto(obj);
         }
