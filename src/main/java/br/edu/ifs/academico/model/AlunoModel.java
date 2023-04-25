@@ -14,10 +14,10 @@ public class AlunoModel {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long matricula;
 
-    @Column(name = "nome", length = 50, nullable = false)
+    @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
-    @Column(name = "email", length = 50, nullable = false, unique = true)
+    @Column(name = "email", length = 80, nullable = false, unique = true)
     private String email;
 
     @Column(name = "cpf", length = 11, nullable = false, unique = true)
@@ -26,4 +26,7 @@ public class AlunoModel {
     @Column(name = "dataNascimento", nullable = false)
     private LocalDate dataNascimento;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "genero_id")
+    private GeneroModel generoModel;
 }

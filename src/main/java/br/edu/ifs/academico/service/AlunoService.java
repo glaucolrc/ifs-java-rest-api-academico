@@ -1,13 +1,17 @@
 package br.edu.ifs.academico.service;
 
+import br.edu.ifs.academico.model.GeneroModel;
+import br.edu.ifs.academico.repository.GeneroRepository;
 import br.edu.ifs.academico.rest.dto.AlunoDto;
 import br.edu.ifs.academico.model.AlunoModel;
 import br.edu.ifs.academico.repository.AlunoRepository;
+import br.edu.ifs.academico.rest.dto.GeneroDto;
 import br.edu.ifs.academico.rest.form.AlunoForm;
 import br.edu.ifs.academico.rest.form.AlunoUpdateForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,10 +22,36 @@ public class AlunoService {
     @Autowired
     AlunoRepository alunoRepository;
 
-    public AlunoDto create(AlunoForm form) {
-        AlunoModel alunoModel = convertToBusiness(form);
-        alunoModel = alunoRepository.save(alunoModel);
-        return convertToDto(alunoModel);
+    @Autowired
+    GeneroRepository generoRepository;
+
+    public AlunoDto create(AlunoForm alunoForm) {
+        AlunoModel novoAluno = convertToAlunoModel(alunoForm);
+
+        Optional<AlunoModel> byEmail = alunoRepository.findByEmail(novoAluno.getEmail());
+        Optional<AlunoModel> byCpf = alunoRepository.findByCpf(novoAluno.getCpf());
+
+        if (byEmail.isPresent()) {
+            throw new IllegalStateException("E-mail já registrado.");
+        }
+
+        if (byCpf.isPresent()) {
+            throw new IllegalStateException("CPF já registrado.");
+        }
+
+        if (novoAluno.getGeneroModel() != null) {
+            Long id = novoAluno.getGeneroModel().getId();
+            GeneroModel generoModel;
+            if (id != null) {
+                generoModel = this.generoRepository.getById(id);
+            } else{
+                generoModel = this.generoRepository.save(novoAluno.getGeneroModel());
+            }
+            novoAluno.setGeneroModel(generoModel);
+        }
+
+        novoAluno = alunoRepository.save(novoAluno);
+        return convertToAlunoDto(novoAluno);
     }
 
     public List<AlunoDto> findAll(){
@@ -32,7 +62,7 @@ public class AlunoService {
     public AlunoDto findById(long matricula) {
         Optional<AlunoModel> optionalAlunoModel = alunoRepository.findById(matricula);
         if (optionalAlunoModel.isPresent()) {
-            return convertToDto(optionalAlunoModel.get());
+            return convertToAlunoDto(optionalAlunoModel.get());
         }
         return null;
     }
@@ -44,7 +74,7 @@ public class AlunoService {
             obj.setNome(form.getNome());
             obj.setEmail(form.getEmail());
             alunoRepository.save(obj);
-            return convertToDto(obj);
+            return convertToAlunoDto(obj);
         }
         return null;
     }
@@ -55,27 +85,58 @@ public class AlunoService {
         }
     }
 
-    private AlunoModel convertToBusiness(AlunoForm alunoForm) {
+    private AlunoModel convertToAlunoModel(AlunoForm alunoForm) {
         AlunoModel alunoModel = new AlunoModel();
         alunoModel.setNome(alunoForm.getNome());
         alunoModel.setEmail(alunoForm.getEmail());
         alunoModel.setCpf(alunoForm.getCpf());
         alunoModel.setDataNascimento(alunoForm.getDataNascimento());
+
+        if (alunoForm.getGeneroForm() != null) {
+            GeneroModel generoModel = new GeneroModel();
+            if (alunoForm.getGeneroForm().getId() != null){
+                generoModel.setId(alunoForm.getGeneroForm().getId());
+            } else {
+                generoModel.setDescricao(alunoForm.getGeneroForm().getDescricao());
+            }
+            alunoModel.setGeneroModel(generoModel);
+        }
+
         return alunoModel;
     }
 
-    private AlunoDto convertToDto(AlunoModel alunoMoodel) {
+    private AlunoDto convertToAlunoDto(AlunoModel alunoModel) {
         AlunoDto alunoDto = new AlunoDto();
-        alunoDto.setMatricula(alunoMoodel.getMatricula());
-        alunoDto.setNome(alunoMoodel.getNome());
-        alunoDto.setEmail(alunoMoodel.getEmail());
-        alunoDto.setCpf(alunoMoodel.getCpf());
-        alunoDto.setDataNascimento(alunoMoodel.getDataNascimento());
+
+        alunoDto.setMatricula(alunoModel.getMatricula());
+        alunoDto.setNome(alunoModel.getNome());
+        alunoDto.setEmail(alunoModel.getEmail());
+        alunoDto.setCpf(alunoModel.getCpf());
+        alunoDto.setDataNascimento(alunoModel.getDataNascimento());
+
+        if (alunoModel.getGeneroModel() != null){
+            GeneroDto generoDto = new GeneroDto();
+            generoDto.setId(alunoModel.getGeneroModel().getId());
+            generoDto.setDescricao(alunoModel.getGeneroModel().getDescricao());
+            alunoDto.setGeneroDto(generoDto);
+        }
+
         return alunoDto;
     }
 
-    private static List<AlunoDto> convertListToDto(List<AlunoModel> alunos) {
-        return alunos.stream().map(AlunoDto::new).collect(Collectors.toList());
+ //   private static List<AlunoDto> convertListToDto(List<AlunoModel> alunos) {
+ //       return alunos.stream().map(AlunoDto::new).collect(Collectors.toList());
+ //   }
+
+    private List<AlunoDto> convertListToDto(List<AlunoModel> list){
+        List<AlunoDto> listDto = new ArrayList<>();
+        for (AlunoModel alunoModel : list) {
+            AlunoDto alunoDto = this.convertToAlunoDto(alunoModel);
+            listDto.add(alunoDto);
+        }
+        return listDto;
     }
+
+
 
 }

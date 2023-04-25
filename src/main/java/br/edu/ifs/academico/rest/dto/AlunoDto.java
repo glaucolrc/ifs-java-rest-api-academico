@@ -2,11 +2,15 @@ package br.edu.ifs.academico.rest.dto;
 
 import br.edu.ifs.academico.model.AlunoModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class AlunoDto {
     private Long matricula;
     private String nome;
@@ -14,17 +18,5 @@ public class AlunoDto {
     private String cpf;
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataNascimento;
-
-    public AlunoDto() {
-
-    }
-
-    public AlunoDto(AlunoModel aluno) {
-        this.matricula = aluno.getMatricula();
-        this.nome = aluno.getNome();
-        this.email = aluno.getEmail();
-        this.cpf = aluno.getCpf();
-        this.dataNascimento = aluno.getDataNascimento();
-    }
-
+    private GeneroDto generoDto;
 }
