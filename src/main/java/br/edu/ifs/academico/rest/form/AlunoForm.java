@@ -10,19 +10,23 @@ import java.time.LocalDate;
 @Data
 public class AlunoForm {
 
+    @NotEmpty
     @NotBlank(message = "O Nome não pode estar em branco.")
     @Size(max = 100)
     private String nome;
 
+    @NotEmpty
     @NotBlank
     @Email(message = "O Endereço de e-mail é inválido.")
     @Size(max = 80)
     private String email;
 
+    @NotEmpty
     @NotBlank
     @CPF(message = "O Número do CPF informado é inválido.")
     @Size(min = 11, max = 11)
     private String cpf;
+
 
     @NotNull(message = "Data de nascimento não pode ser nula.")
     @Past(message = "A data de nascimento informada deve ser anterior ao dia atual.")

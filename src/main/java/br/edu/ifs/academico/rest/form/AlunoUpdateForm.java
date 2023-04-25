@@ -8,10 +8,12 @@ import javax.validation.constraints.*;
 @Data
 public class AlunoUpdateForm {
 
+    @NotEmpty
     @NotBlank(message = "O Nome não pode estar em branco.")
     @Size(max = 100)
     private String nome;
 
+    @NotEmpty
     @NotBlank
     @Email(message = "O Endereço de e-mail é inválido.")
     @Size(max = 80)
