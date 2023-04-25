@@ -7,7 +7,6 @@ import javax.validation.constraints.Size;
 
 @Data
 public class GeneroUpdateForm {
-    private Long id;
 
     @NotBlank(message = "O campo gênero não pode estar em branco.")
     @Size(max = 50)

@@ -21,26 +21,26 @@ public class AlunoController {
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
     public AlunoDto register(@RequestBody @Valid AlunoForm alunoForm) {
-        return alunoService.create(alunoForm);
+        return alunoService.gravar(alunoForm);
     }
 
     @GetMapping
     public List<AlunoDto> list() {
-        return alunoService.findAll();
+        return alunoService.obterTodos();
     }
 
     @GetMapping("/{id}")
     public AlunoDto findById(@PathVariable("id") long matricula) {
-        return alunoService.findById(matricula);
+        return alunoService.obterUm(matricula);
     }
 
     @PutMapping("/{id}")
     public AlunoDto updateById(@RequestBody @Valid AlunoUpdateForm alunoUpdateForm, @PathVariable("id") long matricula) {
-        return alunoService.updateById(alunoUpdateForm, matricula);
+        return alunoService.atualizar(alunoUpdateForm, matricula);
     }
 
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable("id") long matricula) {
-        alunoService.deleteById(matricula);
+        alunoService.remover(matricula);
     }
 }

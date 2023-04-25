@@ -18,5 +18,5 @@ public class AlunoUpdateForm {
     private String email;
 
     @NotNull
-    private GeneroForm generoForm;
+    private GeneroUpdateForm generoUpdateForm;
 }

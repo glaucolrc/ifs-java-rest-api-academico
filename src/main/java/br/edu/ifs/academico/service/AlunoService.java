@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class AlunoService {
@@ -25,11 +24,11 @@ public class AlunoService {
     @Autowired
     GeneroRepository generoRepository;
 
-    public AlunoDto create(AlunoForm alunoForm) {
-        AlunoModel novoAluno = convertToAlunoModel(alunoForm);
+    public AlunoDto gravar(AlunoForm alunoForm) {
+        AlunoModel alunoNovo = convertToAlunoModel(alunoForm);
 
-        Optional<AlunoModel> byEmail = alunoRepository.findByEmail(novoAluno.getEmail());
-        Optional<AlunoModel> byCpf = alunoRepository.findByCpf(novoAluno.getCpf());
+        Optional<AlunoModel> byEmail = alunoRepository.findByEmail(alunoNovo.getEmail());
+        Optional<AlunoModel> byCpf = alunoRepository.findByCpf(alunoNovo.getCpf());
 
         if (byEmail.isPresent()) {
             throw new IllegalStateException("E-mail já registrado.");
@@ -39,59 +38,46 @@ public class AlunoService {
             throw new IllegalStateException("CPF já registrado.");
         }
 
-        if (novoAluno.getGeneroModel() != null) {
-            Long id = novoAluno.getGeneroModel().getId();
-            GeneroModel generoModel;
-            if (id != null) {
-                generoModel = this.generoRepository.getById(id);
-            } else{
-                generoModel = this.generoRepository.save(novoAluno.getGeneroModel());
-            }
-            novoAluno.setGeneroModel(generoModel);
-        }
-
-        novoAluno = alunoRepository.save(novoAluno);
-        return convertToAlunoDto(novoAluno);
+        alunoNovo = alunoRepository.save(alunoNovo);
+        return convertToAlunoDto(alunoNovo);
     }
 
-    public List<AlunoDto> findAll(){
-        List<AlunoModel> alunoModelList = alunoRepository.findAll();
-        return convertListToDto(alunoModelList);
-    }
+    public AlunoDto atualizar(AlunoUpdateForm alunoUpdateForm, long matricula) {
+        Optional<AlunoModel> alunoExistente = alunoRepository.findById(matricula);
+        if (alunoExistente.isPresent()) {
+            AlunoModel alunoAtualizado = alunoExistente.get();
+            alunoAtualizado.setNome(alunoUpdateForm.getNome());
+            alunoAtualizado.setEmail(alunoUpdateForm.getEmail());
 
-    public AlunoDto findById(long matricula) {
-        Optional<AlunoModel> optionalAlunoModel = alunoRepository.findById(matricula);
-        if (optionalAlunoModel.isPresent()) {
-            return convertToAlunoDto(optionalAlunoModel.get());
+            Optional<GeneroModel> generoExistente = generoRepository.findById(alunoExistente
+                    .get()
+                    .getGeneroModel()
+                    .getId());
+            GeneroModel generoAtualizado = generoExistente.get();
+            generoAtualizado.setDescricao(alunoUpdateForm.getGeneroUpdateForm().getDescricao());
+
+            generoRepository.save(generoAtualizado);
+            alunoRepository.save(alunoAtualizado);
+
+            return convertToAlunoDto(alunoAtualizado);
         }
         return null;
     }
 
-    public AlunoDto updateById(AlunoUpdateForm alunoUpdateForm, long matricula) {
-        Optional<AlunoModel> optionalAlunoModel = alunoRepository.findById(matricula);
-        if (optionalAlunoModel.isPresent()) {
-            AlunoModel obj = optionalAlunoModel.get();
-            obj.setNome(alunoUpdateForm.getNome());
-            obj.setEmail(alunoUpdateForm.getEmail());
-            if (alunoUpdateForm.getGeneroForm() != null){
-                GeneroModel generoModel = new GeneroModel();
-                if (alunoUpdateForm.getGeneroForm().getId() != null) {
-                    if (generoRepository.existsById(alunoUpdateForm.getGeneroForm().getId())){
-                        generoModel = generoRepository.getById(alunoUpdateForm.getGeneroForm().getId());
-                    }
-                } else {
-                    generoModel.setDescricao(alunoUpdateForm.getGeneroForm().getDescricao());
-                    generoRepository.save(generoModel);
-                }
-                obj.setGeneroModel(generoModel);
-            }
-            alunoRepository.save(obj);
-            return convertToAlunoDto(obj);
+    public List<AlunoDto> obterTodos(){
+        List<AlunoModel> alunoList = alunoRepository.findAll();
+        return convertListToDto(alunoList);
+    }
+
+    public AlunoDto obterUm(long matricula) {
+        Optional<AlunoModel> alunoExistente = alunoRepository.findById(matricula);
+        if (alunoExistente.isPresent()) {
+            return convertToAlunoDto(alunoExistente.get());
         }
         return null;
     }
 
-    public void deleteById(long matricula) {
+    public void remover(long matricula) {
         if (alunoRepository.existsById(matricula)) {
             alunoRepository.deleteById(matricula);
         }
@@ -132,23 +118,15 @@ public class AlunoService {
             generoDto.setDescricao(alunoModel.getGeneroModel().getDescricao());
             alunoDto.setGeneroDto(generoDto);
         }
-
         return alunoDto;
     }
 
- //   private static List<AlunoDto> convertListToDto(List<AlunoModel> alunos) {
- //       return alunos.stream().map(AlunoDto::new).collect(Collectors.toList());
- //   }
-
     private List<AlunoDto> convertListToDto(List<AlunoModel> list){
-        List<AlunoDto> listDto = new ArrayList<>();
+        List<AlunoDto> alunoDtoList = new ArrayList<>();
         for (AlunoModel alunoModel : list) {
             AlunoDto alunoDto = this.convertToAlunoDto(alunoModel);
-            listDto.add(alunoDto);
+            alunoDtoList.add(alunoDto);
         }
-        return listDto;
+        return alunoDtoList;
     }
-
-
-
 }
