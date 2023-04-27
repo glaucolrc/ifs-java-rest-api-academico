@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Entity
 @Data
-@Table(name="tb_alunos")
+@Table(name="TB_ALUNOS")
 public class AlunoModel {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class AlunoModel {
     @Column(name = "dataNascimento", nullable = false)
     private LocalDate dataNascimento;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "genero_id")
+    @OneToOne
+    @JoinColumn(name = "genero_id", referencedColumnName = "codigo")
     private GeneroModel generoModel;
 }

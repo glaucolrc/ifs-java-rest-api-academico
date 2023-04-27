@@ -18,5 +18,5 @@ public class AlunoDto {
     private String cpf;
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataNascimento;
-    private GeneroDto generoDto;
+    private String descricaoGenero;
 }

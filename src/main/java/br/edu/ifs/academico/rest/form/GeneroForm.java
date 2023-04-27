@@ -9,10 +9,12 @@ import javax.validation.constraints.Size;
 @Data
 public class GeneroForm {
 
-    private Long id;
+    @NotEmpty
+    @NotBlank(message = "O campo código do gênero não pode estar em branco.")
+    private Long codigo;
 
     @NotEmpty
-    @NotBlank(message = "O campo gênero não pode estar em branco.")
+    @NotBlank(message = "O campo descrição do gênero não pode estar em branco.")
     @Size(max = 50)
     private String descricao;
 }

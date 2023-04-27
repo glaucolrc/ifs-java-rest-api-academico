@@ -27,12 +27,10 @@ public class AlunoForm {
     @Size(min = 11, max = 11)
     private String cpf;
 
-
     @NotNull(message = "Data de nascimento não pode ser nula.")
     @Past(message = "A data de nascimento informada deve ser anterior ao dia atual.")
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataNascimento;
 
-    @NotNull
-    private GeneroForm generoForm;
+    private Long codigoGenero;
 }

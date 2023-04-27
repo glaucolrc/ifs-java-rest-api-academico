@@ -6,11 +6,11 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name="tb_genero")
+@Table(name="TB_GENEROS")
 public class GeneroModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long codigo;
 
     @Column(nullable = false, length = 50)
     private String descricao;

@@ -48,17 +48,10 @@ public class AlunoService {
             AlunoModel alunoAtualizado = alunoExistente.get();
             alunoAtualizado.setNome(alunoUpdateForm.getNome());
             alunoAtualizado.setEmail(alunoUpdateForm.getEmail());
-
-            Optional<GeneroModel> generoExistente = generoRepository.findById(alunoExistente
-                    .get()
-                    .getGeneroModel()
-                    .getId());
-            GeneroModel generoAtualizado = generoExistente.get();
-            generoAtualizado.setDescricao(alunoUpdateForm.getGeneroUpdateForm().getDescricao());
-
-            generoRepository.save(generoAtualizado);
+            GeneroModel generoAtualizado = new GeneroModel();
+            generoAtualizado.setCodigo(alunoUpdateForm.getCodigoGenero());
+            alunoAtualizado.setGeneroModel(generoAtualizado);
             alunoRepository.save(alunoAtualizado);
-
             return convertToAlunoDto(alunoAtualizado);
         }
         return null;
@@ -89,34 +82,22 @@ public class AlunoService {
         alunoModel.setEmail(alunoForm.getEmail());
         alunoModel.setCpf(alunoForm.getCpf());
         alunoModel.setDataNascimento(alunoForm.getDataNascimento());
-
-        if (alunoForm.getGeneroForm() != null) {
-            GeneroModel generoModel = new GeneroModel();
-            if (alunoForm.getGeneroForm().getId() != null){
-                generoModel.setId(alunoForm.getGeneroForm().getId());
-            } else {
-                generoModel.setDescricao(alunoForm.getGeneroForm().getDescricao());
-            }
-            alunoModel.setGeneroModel(generoModel);
-        }
-
+        GeneroModel generoAtualizado = new GeneroModel();
+        generoAtualizado.setCodigo(alunoForm.getCodigoGenero());
+        alunoModel.setGeneroModel(generoAtualizado);
         return alunoModel;
     }
 
     private AlunoDto convertToAlunoDto(AlunoModel alunoModel) {
         AlunoDto alunoDto = new AlunoDto();
-
         alunoDto.setMatricula(alunoModel.getMatricula());
         alunoDto.setNome(alunoModel.getNome());
         alunoDto.setEmail(alunoModel.getEmail());
         alunoDto.setCpf(alunoModel.getCpf());
         alunoDto.setDataNascimento(alunoModel.getDataNascimento());
-
-        if (alunoModel.getGeneroModel() != null){
-            GeneroDto generoDto = new GeneroDto();
-            generoDto.setId(alunoModel.getGeneroModel().getId());
-            generoDto.setDescricao(alunoModel.getGeneroModel().getDescricao());
-            alunoDto.setGeneroDto(generoDto);
+        Optional<GeneroModel> optionalGeneroModel = generoRepository.findById(alunoModel.getGeneroModel().getCodigo());
+        if (optionalGeneroModel.isPresent()) {
+            alunoDto.setDescricaoGenero(optionalGeneroModel.get().getDescricao());
         }
         return alunoDto;
     }

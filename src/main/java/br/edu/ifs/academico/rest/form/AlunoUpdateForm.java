@@ -19,6 +19,5 @@ public class AlunoUpdateForm {
     @Size(max = 80)
     private String email;
 
-    @NotNull
-    private GeneroUpdateForm generoUpdateForm;
+    private Long codigoGenero;
 }
