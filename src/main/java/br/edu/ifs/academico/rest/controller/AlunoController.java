@@ -18,29 +18,29 @@ public class AlunoController {
     @Autowired
     private AlunoService alunoService;
 
-    @PostMapping
-    @ResponseStatus(code = HttpStatus.CREATED)
-    public AlunoDto register(@RequestBody @Valid AlunoForm alunoForm) {
-        return alunoService.gravar(alunoForm);
-    }
-
     @GetMapping
-    public List<AlunoDto> list() {
+    public List<AlunoDto> obterTodos() {
         return alunoService.obterTodos();
     }
 
     @GetMapping("/{id}")
-    public AlunoDto findById(@PathVariable("id") long matricula) {
+    public AlunoDto obterUm(@PathVariable("id") long matricula) {
         return alunoService.obterUm(matricula);
     }
 
+    @PostMapping
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public AlunoDto gravar(@RequestBody @Valid AlunoForm alunoForm) {
+        return alunoService.gravar(alunoForm);
+    }
+
     @PutMapping("/{id}")
-    public AlunoDto updateById(@RequestBody @Valid AlunoUpdateForm alunoUpdateForm, @PathVariable("id") long matricula) {
+    public AlunoDto atualizar(@RequestBody @Valid AlunoUpdateForm alunoUpdateForm, @PathVariable("id") long matricula) {
         return alunoService.atualizar(alunoUpdateForm, matricula);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable("id") long matricula) {
+    public void remover(@PathVariable("id") long matricula) {
         alunoService.remover(matricula);
     }
 }
