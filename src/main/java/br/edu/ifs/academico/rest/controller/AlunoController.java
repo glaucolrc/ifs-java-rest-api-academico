@@ -4,8 +4,11 @@ import br.edu.ifs.academico.rest.dto.AlunoDto;
 import br.edu.ifs.academico.rest.form.AlunoForm;
 import br.edu.ifs.academico.rest.form.AlunoUpdateForm;
 import br.edu.ifs.academico.service.AlunoService;
+import br.edu.ifs.academico.service.exceptions.ConstraintException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,12 +33,17 @@ public class AlunoController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public AlunoDto gravar(@RequestBody @Valid AlunoForm alunoForm) {
-        return alunoService.gravar(alunoForm);
+    public ResponseEntity<AlunoDto> gravar( @Valid @RequestBody AlunoForm alunoForm, BindingResult br) {
+        if (br.hasErrors())
+            throw new ConstraintException(br.getAllErrors().get(0).getDefaultMessage());
+        return ResponseEntity.ok().body(alunoService.gravar(alunoForm));
     }
 
     @PutMapping("/{id}")
-    public AlunoDto atualizar(@RequestBody @Valid AlunoUpdateForm alunoUpdateForm, @PathVariable("id") long matricula) {
+    public AlunoDto atualizar(@Valid @RequestBody AlunoUpdateForm alunoUpdateForm , @PathVariable("id") long matricula
+            , BindingResult br) {
+        if (br.hasErrors())
+            throw new ConstraintException(br.getAllErrors().get(0).getDefaultMessage());
         return alunoService.atualizar(alunoUpdateForm, matricula);
     }
 

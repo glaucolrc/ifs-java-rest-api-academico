@@ -25,7 +25,7 @@ public class AlunoModel {
     @Column(name = "dataNascimento", nullable = false)
     private LocalDate dataNascimento;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "genero_id", referencedColumnName = "codigo")
     private GeneroModel generoModel;
 }

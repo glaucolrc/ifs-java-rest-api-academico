@@ -19,5 +19,6 @@ public class AlunoUpdateForm {
     @Size(max = 80)
     private String email;
 
+    @NotNull(message = "O Gênero não pode ser nulo.")
     private Long codigoGenero;
 }

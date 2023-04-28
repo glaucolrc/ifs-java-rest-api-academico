@@ -1,10 +1,12 @@
 package br.edu.ifs.academico.service;
 
+import br.edu.ifs.academico.model.AlunoModel;
 import br.edu.ifs.academico.model.GeneroModel;
 import br.edu.ifs.academico.repository.GeneroRepository;
 import br.edu.ifs.academico.rest.dto.GeneroDto;
 import br.edu.ifs.academico.rest.form.GeneroForm;
 import br.edu.ifs.academico.rest.form.GeneroUpdateForm;
+import br.edu.ifs.academico.service.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,18 @@ public class GeneroService {
 
     @Autowired
     GeneroRepository generoRepository;
+
+    public GeneroDto obterUm(long codigoGenero) {
+
+        Optional<GeneroModel> generoExistente = Optional.ofNullable(generoRepository.findById(codigoGenero)
+                .orElseThrow(() -> new ObjectNotFoundException("Genero de matrícula " + codigoGenero + " não encontrado!")));
+        return convertToGeneroDto(generoExistente.get());
+    }
+
+    public List<GeneroDto> obterTodos(){
+        List<GeneroModel> generoList = generoRepository.findAll();
+        return convertListToDto(generoList);
+    }
 
     public GeneroDto gravar(GeneroForm generoForm) {
         GeneroModel generoNovo = convertToGeneroModel(generoForm);
@@ -38,19 +52,6 @@ public class GeneroService {
             generoAtualizado.setDescricao(generoUpdateForm.getDescricao());
             generoRepository.save(generoAtualizado);
             return convertToGeneroDto(generoAtualizado);
-        }
-        return null;
-    }
-
-    public List<GeneroDto> obterTodos(){
-        List<GeneroModel> generoList = generoRepository.findAll();
-        return convertListToDto(generoList);
-    }
-
-    public GeneroDto obterUm(long codigoGenero) {
-        Optional<GeneroModel> generoExistente = generoRepository.findById(codigoGenero);
-        if (generoExistente.isPresent()) {
-            return convertToGeneroDto(generoExistente.get());
         }
         return null;
     }
