@@ -11,10 +11,7 @@ import br.edu.ifs.academico.service.exceptions.DataIntegrityException;
 import br.edu.ifs.academico.service.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.annotation.Transient;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,41 +27,39 @@ public class AlunoService {
     @Autowired
     GeneroRepository generoRepository;
 
-    public AlunoDto obterUm(long matricula) {
-        Optional<AlunoModel> alunoExistente = Optional.ofNullable(alunoRepository.findById(matricula)
-                .orElseThrow(() -> new ObjectNotFoundException("Aluno de matrícula " + matricula + " não encontrado!")));
-        return convertToAlunoDto(alunoExistente.get());
+    public AlunoDto findById(long matricula) {
+        try {
+            AlunoModel alunoModel = alunoRepository.findById(matricula).get();
+            return convertAlunoModelToAlunoDto(alunoModel);
+        } catch (NoSuchElementException e) {
+            throw new ObjectNotFoundException("Objeto não encontrado! Matrícula: " + matricula + ", Tipo: " + AlunoModel.class.getName());
+        }
     }
 
-    public List<AlunoDto> obterTodos(){
+    public List<AlunoDto> findAll(){
         List<AlunoModel> alunoList = alunoRepository.findAll();
         return convertListToDto(alunoList);
     }
 
-    public AlunoDto gravar(AlunoForm alunoForm) {
+    public AlunoDto insert(AlunoForm alunoForm) {
         try {
-            AlunoModel alunoNovo = convertToAlunoModel(alunoForm);
-
+            AlunoModel alunoNovo = convertAlunoFormToAlunoModel(alunoForm);
             Optional<AlunoModel> byEmail = alunoRepository.findByEmail(alunoNovo.getEmail());
             Optional<AlunoModel> byCpf = alunoRepository.findByCpf(alunoNovo.getCpf());
-
             if (byEmail.isPresent()) {
                 throw new IllegalStateException("E-mail já registrado.");
             }
-
             if (byCpf.isPresent()) {
                 throw new IllegalStateException("CPF já registrado.");
             }
-
             alunoNovo = alunoRepository.save(alunoNovo);
-
-            return convertToAlunoDto(alunoNovo);
+            return convertAlunoModelToAlunoDto(alunoNovo);
         } catch (DataIntegrityViolationException e) {
             throw new DataIntegrityException("Campo(s) obrigatório(s) do Aluno não foi(foram) preenchido(s).");
         }
     }
 
-    public AlunoDto atualizar(AlunoUpdateForm alunoUpdateForm, long matricula) {
+    public AlunoDto update(AlunoUpdateForm alunoUpdateForm, long matricula) {
         try {
             Optional<AlunoModel> alunoExistente = alunoRepository.findById(matricula);
             if (alunoExistente.isPresent()) {
@@ -75,21 +70,26 @@ public class AlunoService {
                 generoAtualizado.setCodigo(alunoUpdateForm.getCodigoGenero());
                 alunoAtualizado.setGeneroModel(generoAtualizado);
                 alunoRepository.save(alunoAtualizado);
-                return convertToAlunoDto(alunoAtualizado);
+                return convertAlunoModelToAlunoDto(alunoAtualizado);
+            }else{
+                throw new DataIntegrityException("A Matrícula do Aluno não existe na base de dados!");
             }
-            return null;
         } catch (DataIntegrityViolationException e) {
             throw new DataIntegrityException("Campo(s) obrigatório(s) do Aluno não foi(foram) preenchido(s).");
         }
     }
 
-    public void remover(long matricula) {
-        if (alunoRepository.existsById(matricula)) {
-            alunoRepository.deleteById(matricula);
+    public void delete(long matricula) {
+        try {
+            if (alunoRepository.existsById(matricula)) {
+                alunoRepository.deleteById(matricula);
+            }
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityException("Não é possível excluir um Aluno!");
         }
     }
 
-    private AlunoModel convertToAlunoModel(AlunoForm alunoForm) {
+    private AlunoModel convertAlunoFormToAlunoModel(AlunoForm alunoForm) {
         AlunoModel alunoModel = new AlunoModel();
         alunoModel.setNome(alunoForm.getNome());
         alunoModel.setEmail(alunoForm.getEmail());
@@ -101,7 +101,7 @@ public class AlunoService {
         return alunoModel;
     }
 
-    private AlunoDto convertToAlunoDto(AlunoModel alunoModel) {
+    private AlunoDto convertAlunoModelToAlunoDto(AlunoModel alunoModel) {
         AlunoDto alunoDto = new AlunoDto();
         alunoDto.setMatricula(alunoModel.getMatricula());
         alunoDto.setNome(alunoModel.getNome());
@@ -118,7 +118,7 @@ public class AlunoService {
     private List<AlunoDto> convertListToDto(List<AlunoModel> list){
         List<AlunoDto> alunoDtoList = new ArrayList<>();
         for (AlunoModel alunoModel : list) {
-            AlunoDto alunoDto = this.convertToAlunoDto(alunoModel);
+            AlunoDto alunoDto = this.convertAlunoModelToAlunoDto(alunoModel);
             alunoDtoList.add(alunoDto);
         }
         return alunoDtoList;
