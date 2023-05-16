@@ -32,5 +32,6 @@ public class AlunoForm {
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataNascimento;
 
+    @NotNull(message = "O Gênero não pode ser nulo.")
     private Long codigoGenero;
 }

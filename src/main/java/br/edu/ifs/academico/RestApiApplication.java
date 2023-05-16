@@ -5,11 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 
 /**
- * Classe para iniciar a aplicação Spring Boot
+ * Classe que inicia a aplicação Spring Boot
  * @author Glauco Luiz Rezende de Carvalho
  * @email glauco.carvalho@academico.ifs.edu.br
- * @version 1.02
- * Date: 25/04/2023
+ * @Date: 16/05/2023
+ * @version 1.03
  **/
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 public class RestApiApplication {
